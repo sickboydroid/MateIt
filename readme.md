@@ -12,7 +12,7 @@ Mixing human stupidity with machine intelligence is the best way to avoid gettin
 
 ## Overview
 
-Stockfish Local is a browser extension that runs the strongest chess engine directly in your browser tab. It watches the board and tells you exactly what the best move is without sending a single byte of data to an external server.
+**MateIt** is a browser extension that runs the strongest chess engine directly in your browser tab. It watches the board and tells you exactly what the best move is without sending a single byte of data to an external server.
 
 It's fast, it's private, and it's probably better at chess than all of us combined.
 
@@ -29,9 +29,9 @@ Since this is a custom tool for the discerning developer (that's you), it's inst
 
 ## Usage
 
-Using the tool is easier than checkmating with a King and Rook.
+Using the tool is wayyy more easier than checkmating with a King and Rook.
 
-1. **The Panel:** You will see a small overlay on the screen.
+1. **The Panel:** You will see a small overlay on the screen when you go to _chess.com_. It will appear automatically, you don't need to do anything.
 2. **Pick a Side:**
    - Click **WHITE** if you are playing the white pieces.
    - Click **BLACK** if you are playing the black pieces.
@@ -48,10 +48,11 @@ Using the tool is easier than checkmating with a King and Rook.
 
 This extension is built for analysis, debugging, and educational purposes. It is a powerful tool that runs locally.
 
-However, using computer assistance during live games against human opponents on platforms like Chess.com or Lichess is strictly forbidden. It is unfair, against the rules, and will result in your account being banned. Use this tool responsibly—analyze your own games _after_ they are finished, or test it against bots. If you get banned for cheating, that is entirely on you.
+However, using computer assistance during live games against human opponents on platforms like Chess.com is strictly forbidden. It is unfair, against the rules, and will result in your account being banned. Use this tool responsibly—analyze your own games _after_ they are finished, or test it against bots. If you get banned for cheating, that is entirely on you.
 
 ## Credits
 
 - **Stockfish:** The engine doing all the heavy lifting. Distributed under GPLv3.
 - **Chess.js:** The library that translates "Knight to f3" into something the engine actually understands.
-- **You:** For actually reading the documentation.
+- **Me:** For building this thing.
+- **You:** For actually reading the using it.
