@@ -1,67 +1,57 @@
-# Stockfish Local Integration
+# MateIt
 
-A high-performance Chrome Extension that runs the Stockfish chess engine directly in the browser using WebAssembly (WASM). This tool performs local analysis on third-party chess websites without sending game data to external servers, ensuring low latency and privacy.
+_Because "Fair Play" is just a suggestion._
+
+## SERIOUS NOTE
+
+**Freedom is your best camouflage.**
+
+You don't have to follow the engine like a sheep. You can play your own moves, make your own mistakes, and only call in the airstrike when you really need it. Use it just for the endgame, just to fix a blunder, or not at all.
+
+Mixing human stupidity with machine intelligence is the best way to avoid getting banned. But be warned: if you use it on every single move, not even God (or the site engineers) can save your account.
 
 ## Overview
 
-This extension injects a local instance of Stockfish into the web page. It observes the DOM for moves, translates them from Standard Algebraic Notation (SAN) to Long Algebraic Notation (LAN), and computes the best move and evaluation score in real-time.
+Stockfish Local is a browser extension that runs the strongest chess engine directly in your browser tab. It watches the board and tells you exactly what the best move is without sending a single byte of data to an external server.
 
-## Key Features
-
-- **Local WASM Execution:** Runs Stockfish entirely client-side using Web Workers. No backend API is required.
-- **Perspective-Aware Evaluation:**
-  - The evaluation score (+/-) adjusts based on the selected player color.
-  - Positive values always indicate the selected player is winning.
-  - Negative values indicate the selected player is losing.
-- **Automatic Move Translation:** Integrated with chess.js to robustly translate board moves (e.g., "Nf3") into the format required by Stockfish (e.g., "g1f3").
-- **CORS & CSP Bypass:** Uses a specific Blob-based loading strategy to bypass Manifest V3 security restrictions, allowing the WASM engine to compile and run on third-party domains.
-- **Visual Overlay:** Draws arrows on the board indicating the best calculated move.
-
-## Project Structure
-
-Ensure your directory is organized as follows:
-
-/project-root
-├── manifest.json # Extension configuration (Manifest V3)
-├── ui.js # UI Injection and DOM Observer
-├── engine-service.js # Engine Controller, Worker management, and Translation logic
-├── styles.css # UI Styling
-└── engine/ # Engine Assets
-├── stockfish.js # Stockfish Engine Script
-├── stockfish.wasm # WebAssembly Binary
-└── chess.js # Chess logic library
+It's fast, it's private, and it's probably better at chess than all of us combined.
 
 ## Installation
 
-1. Clone or download the repository to a local folder.
-2. Open Google Chrome and navigate to: chrome://extensions
-3. Enable "Developer mode" using the toggle switch in the top right corner.
-4. Click the "Load unpacked" button.
-5. Select the root folder of this project.
-6. The extension should now appear in your list.
+Since this is a custom tool for the discerning developer (that's you), it's installed via Developer Mode.
+
+1. Download or clone this repository to a folder on your machine.
+2. Open Chrome and type `chrome://extensions` in the address bar.
+3. Flip the "Developer mode" switch in the top right corner.
+4. Click "Load unpacked."
+5. Select the folder where you saved these files.
+6. Go to a chess website and look for the new panel. If you don't see it, refresh the page.
 
 ## Usage
 
-1. Navigate to a supported chess website (e.g., Chess.com) and open a game or analysis board.
-2. The "STOCKFISH LOCAL" panel will appear on the screen.
-3. Select your side:
-   - Click "WHITE" if you are playing/analyzing as White.
-   - Click "BLACK" if you are playing/analyzing as Black.
-   - Note: Selecting the correct color ensures the evaluation score (+/-) is accurate for your perspective.
-4. Set the Depth (default is 15) to control the strength of the analysis.
-5. As moves are made on the board, the extension will automatically calculate and display the best reply.
+Using the tool is easier than checkmating with a King and Rook.
 
-## Technical Implementation Details
-
-- **Engine Loading:** To comply with Chrome's Same-Origin Policy and Manifest V3, the engine is loaded by fetching the script source as text and creating a Blob URL. This allows the Worker to initialize with the correct relative paths for the WASM binary.
-- **Move Sanitization:** Stockfish requires Long Algebraic Notation (LAN). The service uses chess.js to validate the board state and convert the visual moves (SAN) into LAN before sending commands to the engine.
-- **Synchronization:** The service implements a job queue to ensure "position" and "go" commands are sent in strict sequence, preventing race conditions during rapid board updates.
+1. **The Panel:** You will see a small overlay on the screen.
+2. **Pick a Side:**
+   - Click **WHITE** if you are playing the white pieces.
+   - Click **BLACK** if you are playing the black pieces.
+   - _Pro Tip: Ensure this matches your actual color, or the engine will tell you how to lose most efficiently._
+3. **Depth:** The default depth is 15. This is usually enough to beat a Grandmaster. Crank it up if you have patience and a good CPU; turn it down if you want instant (but slightly less god-like) advice.
+4. **The Evaluation:**
+   - A positive score (e.g., +1.50) means **YOU** are winning.
+   - A negative score (e.g., -2.00) means **YOU** are in trouble.
+   - "M3" means you have a forced mate in 3. Don't mess it up.
 
 ## Disclaimer
 
-This tool is intended for educational purposes, local analysis, and debugging. Using engine assistance during live games against human opponents on competitive platforms is a violation of Fair Play policies and may result in account suspension.
+**Read this part carefully.**
+
+This extension is built for analysis, debugging, and educational purposes. It is a powerful tool that runs locally.
+
+However, using computer assistance during live games against human opponents on platforms like Chess.com or Lichess is strictly forbidden. It is unfair, against the rules, and will result in your account being banned. Use this tool responsibly—analyze your own games _after_ they are finished, or test it against bots. If you get banned for cheating, that is entirely on you.
 
 ## Credits
 
-- Stockfish Chess Engine (GPLv3)
-- Chess.js (BSD)
+- **Stockfish:** The engine doing all the heavy lifting. Distributed under GPLv3.
+- **Chess.js:** The library that translates "Knight to f3" into something the engine actually understands.
+- **You:** For actually reading the documentation.
