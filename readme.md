@@ -2,9 +2,7 @@
 
 _Because "Fair Play" is just a suggestion._
 
-## SERIOUS NOTE
-
-**Freedom is your best camouflage.**
+**_Freedom is your best camouflage:_**
 
 You don't have to follow the engine like a sheep. You can play your own moves, make your own mistakes, and only call in the airstrike when you really need it. Use it just for the endgame, just to fix a blunder, or not at all.
 
