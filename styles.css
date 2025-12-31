@@ -1,0 +1,239 @@
+/* --- MAIN PANEL --- */
+#sf-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  background: #121212;
+  color: #fff;
+  border-radius: 8px;
+  border: 1px solid #333;
+  font-family: 'Segoe UI', sans-serif;
+  z-index: 10000;
+  font-size: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  max-height: 600px;
+  /* Fully expanded height */
+}
+
+/* COLLAPSED STATE (Hover Mode) */
+#sf-panel.sf-collapsed {
+  max-height: 44px;
+  /* Only header height */
+  width: 180px;
+  /* Smaller width */
+  opacity: 0.7;
+}
+
+#sf-panel.sf-collapsed:hover {
+  max-height: 600px;
+  /* Expand on hover */
+  width: 300px;
+  opacity: 1;
+}
+
+/* --- HEADER --- */
+#sf-header {
+  background: #1f1f1f;
+  padding: 12px 15px;
+  cursor: grab;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  user-select: none;
+}
+
+#sf-header:active {
+  cursor: grabbing;
+}
+
+#sf-title {
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #e0e0e0;
+}
+
+/* COLLAPSE TOGGLE ICON */
+.sf-icon-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 5px;
+  transition: color 0.2s;
+}
+
+.sf-icon-btn:hover {
+  color: #fff;
+}
+
+.sf-icon-btn.active {
+  color: #00bcd4;
+}
+
+/* Blue when 'pinned' */
+
+/* --- CONTENT --- */
+#sf-content {
+  padding: 15px;
+}
+
+.sf-section {
+  margin-bottom: 15px;
+}
+
+/* CONTROL ROWS */
+.sf-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  height: 32px;
+}
+
+.sf-label {
+  color: #aaa;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* LIMIT INPUTS */
+.sf-limit-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.sf-radio {
+  transform: scale(1.2);
+  accent-color: #ff073a;
+  cursor: pointer;
+}
+
+.sf-input {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #fff;
+  width: 70px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-family: monospace;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.sf-input:focus {
+  border-color: #00bcd4;
+  outline: none;
+}
+
+.sf-input:disabled {
+  background: #1a1a1a;
+  color: #555;
+  border-color: #222;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* MODE BUTTONS */
+.sf-mode-group {
+  display: flex;
+  background: #222;
+  border-radius: 6px;
+  padding: 4px;
+  width: 100%;
+  gap: 4px;
+}
+
+.sf-mode-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #777;
+  padding: 8px 0;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sf-mode-btn:hover {
+  background: #333;
+  color: #bbb;
+}
+
+.sf-mode-btn.active-off {
+  background: #d32f2f;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.sf-mode-btn.active-on {
+  background: #eee;
+  color: #111;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* --- INFO DISPLAY --- */
+#sf-best-display {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff073a;
+  letter-spacing: 1px;
+}
+
+/* --- EVAL BAR (B&W) --- */
+#sf-eval-container {
+  height: 24px;
+  background: #000;
+  border: 1px solid #555;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+#sf-eval-fill {
+  height: 100%;
+  background: #fff;
+  width: 50%;
+  transition: width 0.5s ease-out;
+}
+
+#sf-eval-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #00bcd4;
+  /* Cyan to pop against B&W */
+  mix-blend-mode: difference;
+  /* Inverts color based on background */
+  pointer-events: none;
+}
+
+/* --- SVG ARROWS --- */
+#sf-svg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 8000;
+}
