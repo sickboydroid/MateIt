@@ -2,10 +2,10 @@
  * =============================================================================
  * STOCKFISH SERVICE (FINAL SCORE FIX)
  * =============================================================================
- * Fixes:
- * 1. Correctly calculates turn (Fixes the "Startpos" inversion bug).
- * 2. Normalizes scores so '+' ALWAYS means the selected color is winning.
  */
+
+// 👇 1. Import Chess.js directly
+import { Chess } from "chess.js";
 
 const Log = {
   sys: (msg) =>
@@ -27,15 +27,13 @@ class LocalEngineService {
 
   async init() {
     Log.sys("Initializing Service...");
-    if (typeof window.Chess === "function") {
-      Log.sys("Chess.js detected.");
-    } else {
-      Log.err("CRITICAL: Chess.js is missing!");
-    }
+    // 👇 2. No need to check window.Chess anymore
+    Log.sys("Chess.js loaded via npm.");
     await this._initStockfish();
   }
 
   async _initStockfish() {
+    // Keep this logic exactly the same for public folder assets
     const engineUrl = chrome.runtime.getURL("engine/stockfish.js");
     const wasmUrl = chrome.runtime.getURL("engine/stockfish.wasm");
 
@@ -68,7 +66,6 @@ class LocalEngineService {
 
   // --- PUBLIC API ---
 
-  // NOTE: ui.js must pass 'playerColor' (STATE.mode) here!
   async getBestMove(
     limit = { type: "depth", value: 15 },
     moves = "",
@@ -94,7 +91,7 @@ class LocalEngineService {
     return this._execute(posCmd, "eval", "eval", turn, playerColor);
   }
 
-  // --- HELPER: TURN DETECTION (BUG FIXED) ---
+  // --- HELPER: TURN DETECTION ---
 
   _preparePosition(movesStr) {
     let cleanMoves = "";
@@ -114,16 +111,12 @@ class LocalEngineService {
 
       cleanMoves = `startpos moves ${translated}`;
 
-      // FIX: Handle empty string properly
-      // If translated is "", split gives [""] which has length 1 (Wrong!)
-      // We filter empty strings to get true move count.
       const moveArray = translated
         .trim()
         .split(/\s+/)
         .filter((m) => m !== "");
       const count = moveArray.length;
 
-      // Even moves = White's turn, Odd moves = Black's turn
       turn = count % 2 === 0 ? "w" : "b";
     }
     return { cmdString: cleanMoves, turn };
@@ -131,9 +124,10 @@ class LocalEngineService {
 
   _sanitizeMoves(movesStr) {
     if (!movesStr) return "";
-    if (typeof window.Chess !== "function") return null;
+
+    // 👇 3. Use new Chess() directly (removed window check)
     try {
-      const game = new window.Chess();
+      const game = new Chess();
       const moves = movesStr.trim().split(/\s+/);
       const lanMoves = [];
       for (const move of moves) {
@@ -152,7 +146,7 @@ class LocalEngineService {
     }
   }
 
-  // --- QUEUE & WORKER LOGIC ---
+  // --- QUEUE & WORKER LOGIC (Unchanged) ---
 
   _execute(preCmd, mainCmd, type, turn, playerColor) {
     return new Promise((resolve, reject) => {
@@ -210,7 +204,6 @@ class LocalEngineService {
     if (job.type === "bestmove" && line.startsWith("bestmove")) {
       isDone = true;
       const bestMoveMatch = line.match(/bestmove\s(\w+)/);
-      // Regex to find scores (looks for last occurrence)
       const scoreRegex = /score\s(cp|mate)\s([-\d]+)/g;
       const matches = [...job.buffer.matchAll(scoreRegex)];
 
@@ -218,29 +211,18 @@ class LocalEngineService {
 
       if (matches.length > 0) {
         const lastMatch = matches.pop();
-        let type = lastMatch[1]; // 'cp' or 'mate'
+        let type = lastMatch[1];
         let val = parseInt(lastMatch[2]);
 
-        // --- SCORE NORMALIZATION LOGIC ---
-
-        // 1. Stockfish reports relative to "Side to Move".
-        // If it's Black's turn, we flip it so Positive ALWAYS means "White Advantage".
         if (job.turn === "b") val = val * -1;
-
-        // 2. Adjust for Player Perspective
-        // If User is Black, we want Positive to mean "Black Advantage".
         if (job.playerColor === "black") val = val * -1;
 
-        // 3. Format Output
         if (type === "mate") {
           const movesToMate = Math.abs(val);
-          // If val is positive here, it means "Player Wins".
           const sign = val > 0 ? "+" : "-";
           displayScore = `${sign}M${movesToMate}`;
         } else {
-          // Centipawns to Pawns
           displayScore = (val / 100).toFixed(2);
-          // Add explicit plus sign for positive scores
           if (val > 0) displayScore = "+" + displayScore;
         }
       }
@@ -255,7 +237,6 @@ class LocalEngineService {
         line.includes("Final evaluation"))
     ) {
       isDone = true;
-      // Handle eval parsing if needed (less common for move analysis)
       result = { score: "0.00" };
     }
 
@@ -268,4 +249,5 @@ class LocalEngineService {
   }
 }
 
+// Make it globally available if your index.js expects it on window (optional with modules, but safe for legacy code)
 window.LocalEngineService = LocalEngineService;
