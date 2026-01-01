@@ -18,12 +18,14 @@ It's fast, it's private, and it's probably better at chess than all of us combin
 
 Since this is a custom tool for the discerning developer (that's you), it's installed via Developer Mode.
 
-1. Download or clone this repository to a folder on your machine.
+1. Download the latest release of repository and extract the zip
 2. Open Chrome and type `chrome://extensions` in the address bar.
 3. Flip the "Developer mode" switch in the top right corner.
 4. Click "Load unpacked."
-5. Select the folder where you saved these files.
+5. Select the folder where you saved extracted files.
 6. Go to a chess website and look for the new panel. If you don't see it, refresh the page.
+
+You can also built from the latest source code by running `npm install` followed by `npm run build`. This will create `dist` folder containing the extension. Then install the extension as explained above and you are done.
 
 ## Usage
 
