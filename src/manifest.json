@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.chess.com/*"],
-      "js": ["src/content/index.js"]
+      "js": ["src/content/main.js"]
     }
   ]
 }
