@@ -8,7 +8,10 @@ _Because "Fair Play" is just a suggestion._
 >
 > Mixing human stupidity with machine intelligence is the best way to avoid getting banned. But be warned: if you use it on every single move, not even God (or the site engineers) can save your account.
 
+![Screenshot](screenshots/screenshot.png)
+
 ---
+
 
 ## 🎯 Overview
 
