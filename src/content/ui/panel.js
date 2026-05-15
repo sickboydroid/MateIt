@@ -158,12 +158,7 @@ export class UI {
       percent = (1 / (1 + Math.exp(-0.5 * val))) * 100;
     }
 
-    // In black mode, we might want to flip the visual sign logic for the user
-    // (Existing logic: If user is black, flip sign for display)
-    if (STATE.mode === "black") {
-      displayScore =
-        (displayScore[0] === "-" ? "+" : "-") + displayScore.substring(1);
-    }
+    // Score is correct as received, visual sign matches player perspective.
 
     txt.innerText = displayScore;
     bar.style.width = `${percent}%`;

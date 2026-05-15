@@ -88,10 +88,7 @@ class App {
         if (evalData && evalData.score !== "0.00") score = evalData.score;
       }
 
-      // 3. Adjust score for Black perspective (Display logic)
-      if (STATE.mode === "black") {
-        score = (score[0] === "-" ? "+" : "-") + score.substring(1);
-      }
+      // Score is already adjusted for Player perspective in engine.js
 
       if (bestData && bestData.bestMove) {
         Visuals.drawArrow(bestData.bestMove);
