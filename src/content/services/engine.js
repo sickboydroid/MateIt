@@ -156,7 +156,8 @@ export class LocalEngineService {
         playerColor,
         resolve,
         reject,
-        buffer: "",
+        lastScoreType: null,
+        lastScoreVal: null,
         done: false,
       });
 
@@ -196,7 +197,15 @@ export class LocalEngineService {
     if (this.jobQueue.length === 0) return;
 
     const job = this.jobQueue[0];
-    job.buffer += line + "\n";
+
+    // parse score on the fly
+    if (line.startsWith("info") && line.includes("score")) {
+      const scoreMatch = line.match(/score\s(cp|mate)\s([-\d]+)/);
+      if (scoreMatch) {
+        job.lastScoreType = scoreMatch[1];
+        job.lastScoreVal = parseInt(scoreMatch[2]);
+      }
+    }
 
     let isDone = false;
     let result = null;
@@ -205,14 +214,11 @@ export class LocalEngineService {
     if (job.type === "bestmove" && line.startsWith("bestmove")) {
       isDone = true;
       const bestMoveMatch = line.match(/bestmove\s(\w+)/);
-      const scoreRegex = /score\s(cp|mate)\s([-\d]+)/g;
-      const matches = [...job.buffer.matchAll(scoreRegex)];
 
       let displayScore = "0.00";
-      if (matches.length > 0) {
-        const lastMatch = matches.pop();
-        const type = lastMatch[1];
-        let val = parseInt(lastMatch[2]);
+      if (job.lastScoreType) {
+        const type = job.lastScoreType;
+        let val = job.lastScoreVal;
 
         // Fix Score Perspective
         if (job.turn === "b") val *= -1;
