@@ -18,7 +18,11 @@ class App {
       const list = document.querySelector("wc-simple-move-list");
       if (list) {
         clearInterval(checkLoop);
-        const obs = new MutationObserver(() => this.process());
+        let timeout;
+        const obs = new MutationObserver(() => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => this.process(), 100);
+        });
         obs.observe(list, {
           childList: true,
           subtree: true,

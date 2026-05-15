@@ -76,10 +76,15 @@ export class UI {
       header.style.cursor = "grab";
     });
 
+    let rafId = null;
     window.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
-      panel.style.left = `${e.clientX - startX}px`;
-      panel.style.top = `${e.clientY - startY}px`;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        panel.style.left = `${e.clientX - startX}px`;
+        panel.style.top = `${e.clientY - startY}px`;
+        rafId = null;
+      });
     });
 
     // 2. State & Inputs
