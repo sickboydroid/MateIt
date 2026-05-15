@@ -7,6 +7,10 @@ const Log = {
     console.log(`%c[ERROR] ${msg}`, "color: #f44336; font-weight: bold;"),
 };
 
+/**
+ * LocalEngineService handles interactions with the Stockfish WASM worker.
+ * It queues commands, processes engine output, and returns best moves or evaluations.
+ */
 export class LocalEngineService {
   constructor() {
     this.worker = null;
@@ -60,6 +64,13 @@ export class LocalEngineService {
 
   // --- Public API ---
 
+  /**
+   * Gets the best move for a given position based on limits.
+   * @param {Object} limit - { type: "depth" | "time", value: number }
+   * @param {string} moves - Move history string.
+   * @param {string} playerColor - "white" or "black".
+   * @returns {Promise<{bestMove: string|null, score: string}>}
+   */
   async getBestMove(
     limit = { type: "depth", value: 15 },
     moves = "",
@@ -77,6 +88,12 @@ export class LocalEngineService {
     return this._execute(posCmd, goCmd, "bestmove", turn, playerColor);
   }
 
+  /**
+   * Gets a static evaluation for the current position without a deep search.
+   * @param {string} moves - Move history string.
+   * @param {string} playerColor - "white" or "black".
+   * @returns {Promise<{score: string}>}
+   */
   async getEvaluation(moves = "", playerColor = "white") {
     const { cmdString, turn } = this._preparePosition(moves);
     if (!cmdString) return { score: "0.00" };
