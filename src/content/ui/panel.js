@@ -1,12 +1,22 @@
 import { STATE } from "../config.js";
 import { Visuals } from "../utils/visuals.js";
 
+/**
+ * UI Panel Manager.
+ * Renders and handles interactions for the on-screen control panel.
+ */
 export class UI {
+  /**
+   * @param {Object} app - Reference to the Main App instance.
+   */
   constructor(app) {
     this.app = app; // Reference to Main App for callbacks
     this.render();
   }
 
+  /**
+   * Renders the UI panel into the DOM.
+   */
   render() {
     const div = document.createElement("div");
     div.id = "sf-panel";
@@ -56,6 +66,10 @@ export class UI {
     this.bindEvents(div);
   }
 
+  /**
+   * Binds DOM events for drag-and-drop, inputs, and buttons.
+   * @param {HTMLElement} panel - The panel DOM element.
+   */
   bindEvents(panel) {
     // 1. Dragging Logic
     const header = panel.querySelector("#sf-header");
@@ -145,6 +159,11 @@ export class UI {
     });
   }
 
+  /**
+   * Updates the UI panel with the best move and engine evaluation.
+   * @param {string} move - The best move in algebraic notation (e.g. "e2e4").
+   * @param {string} score - The evaluation score string (e.g. "+1.50" or "M3").
+   */
   updateInfo(move, score) {
     document.getElementById("sf-best-display").innerText = move || "-";
     const bar = document.getElementById("sf-eval-fill");
