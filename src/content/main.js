@@ -4,7 +4,14 @@ import { LocalEngineService } from "./services/engine.js";
 import { Visuals } from "./utils/visuals.js";
 import "./styles.css";
 
+/**
+ * Main Application Class.
+ * Orchestrates the DOM observer, engine interactions, and UI updates.
+ */
 class App {
+  /**
+   * Initializes the application, state, and DOM observer.
+   */
   constructor() {
     this.lastFen = "";
     this.engine = new LocalEngineService();
@@ -12,7 +19,10 @@ class App {
     this.initObserver();
   }
 
-  /** Observes the move list for changes. */
+  /**
+   * Observes the simple-move-list for changes.
+   * Uses debouncing to prevent excessive engine calls on rapid DOM changes.
+   */
   initObserver() {
     const checkLoop = setInterval(() => {
       const list = document.querySelector("wc-simple-move-list");
@@ -32,6 +42,10 @@ class App {
     }, 1000);
   }
 
+  /**
+   * Handles user mode change from the UI panel.
+   * @param {string} mode - The selected mode ("off", "white", "black").
+   */
   onModeChange(mode) {
     Visuals.clear();
     if (mode !== "off") {
@@ -40,10 +54,13 @@ class App {
     }
   }
 
-  /** Scrapes moves from DOM. */
+  /**
+   * Scrapes algebraic moves from the DOM.
+   * @returns {string} Space-separated move string.
+   */
   getMoves() {
     const nodes = document.querySelectorAll("wc-simple-move-list .node");
-    let moves = [];
+    const moves = [];
     nodes.forEach((n) => {
       let text = n.innerText.trim();
       // Handle figurine notation if present
@@ -54,6 +71,9 @@ class App {
     return moves.join(" ");
   }
 
+  /**
+   * Processes the current board state, queries the engine, and updates visuals.
+   */
   async process() {
     if (STATE.mode === "off") return;
     Visuals.clear();
