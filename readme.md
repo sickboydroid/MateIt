@@ -24,7 +24,7 @@ It's fast, it's private, and it's probably better at chess than all of us combin
 Since this is a custom tool for the discerning developer (that's you), it's installed via Developer Mode.
 
 ### Method 1: Pre-packaged
-1. Download the latest release of the repository and extract the zip.
+1. [Download the latest release](https://github.com/sickboydroid/MateIt/releases/download/v1.2.0/MateIt.zip) of the repository and extract the zip.
 2. Open Chrome and type `chrome://extensions` in the address bar.
 3. Flip the **Developer mode** switch in the top right corner.
 4. Click **Load unpacked**.
