@@ -37,13 +37,14 @@ class App {
       value: STATE.limitType === "depth" ? STATE.depthVal : STATE.timeVal,
     };
     const request = ++this.request;
+    this.engine.cancel();
     this.result = null;
     Visuals.clear();
     this.ui.updateInfo(null, null);
     if (!board || mode === "off" || !fen || fen.split(" ")[1] !== turn) return;
 
     try {
-      const result = await this.engine.getBestMove(limit, fen, mode);
+      const result = await this.engine.getBestMove(request, limit, fen);
       if (!result || request !== this.request) return;
       this.result = result;
       this.draw();
