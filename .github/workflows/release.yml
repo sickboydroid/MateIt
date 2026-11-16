@@ -1,0 +1,39 @@
+name: Publish extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: '24'
+      - name: Check the release version
+        run: |
+          node --input-type=commonjs -e '
+            const version = require("./package.json").version;
+            if (require("./src/manifest.json").version !== version ||
+                process.env.GITHUB_REF_NAME !== "v" + version) {
+              throw new Error("Tag, package, and extension versions must match");
+            }
+          '
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Package the extension
+        working-directory: dist
+        run: zip -q -r ../MateIt.zip manifest.json assets engine src service-worker-loader.js
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" MateIt.zip --verify-tag --generate-notes

@@ -1,6 +1,6 @@
 {
   "name": "mateit2",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "_Because \"Fair Play\" is just a suggestion._",
   "main": "config.js",
   "scripts": {

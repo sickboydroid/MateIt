@@ -21,15 +21,17 @@ It's fast, it's private, and it's probably better at chess than all of us combin
 
 ## ⚙️ Installation
 
-Since this is a custom tool for the discerning developer (that's you), it's installed via Developer Mode.
+Install MateIt in Chrome 116 or later, or a compatible Chromium browser, using Developer Mode.
 
 ### Method 1: Pre-packaged
-1. [Download the latest release](https://github.com/sickboydroid/MateIt/releases/download/v1.2.0/MateIt.zip) of the repository and extract the zip.
+1. [Download the latest release](https://github.com/sickboydroid/MateIt/releases/latest/download/MateIt.zip) of the repository and extract the zip.
 2. Open Chrome and type `chrome://extensions` in the address bar.
 3. Flip the **Developer mode** switch in the top right corner.
 4. Click **Load unpacked**.
 5. Select the folder where you saved the extracted files.
-6. Go to a chess website and look for the new panel. If you don't see it, refresh the page.
+6. Open a board on Chess.com. The panel appears when the board loads, including when you open another board without leaving the page.
+
+When updating an unpacked installation, replace the extension files, reload the extension on `chrome://extensions`, and reopen any already-open Chess.com tabs once.
 
 ### Method 2: From Source
 You can also build from the latest source code by running:
@@ -48,7 +50,7 @@ Using the tool is wayyy easier than checkmating with a King and Rook.
    - Click **WHITE** if you are playing the white pieces.
    - Click **BLACK** if you are playing the black pieces.
    - _Pro Tip: Ensure this matches your actual color, or the engine will tell you how to lose most efficiently._
-3. **Depth:** The default depth is `15`. This is usually enough to beat a Grandmaster. Crank it up if you have patience and a good CPU; turn it down if you want instant (but slightly less god-like) advice.
+3. **Depth:** The default depth is `12`. This is usually enough to beat a Grandmaster. Crank it up if you have patience and a good CPU; turn it down if you want instant (but slightly less god-like) advice.
 4. **The Evaluation:**
    - A positive score (e.g., `+1.50`) means **YOU** are winning.
    - A negative score (e.g., `-2.00`) means **YOU** are in trouble.
