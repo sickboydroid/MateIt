@@ -3,8 +3,6 @@
  * Imported by UI (to update) and App (to read).
  */
 export const CONFIG = {
-  STARTUP_DELAY: 1500,
-
   // SVG Styles
   ARROW_COLOR: "#ed3f62ff",
   ARROW_OPACITY: "0.9",

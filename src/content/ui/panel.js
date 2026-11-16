@@ -1,5 +1,4 @@
 import { STATE } from "../config.js";
-import { Visuals } from "../utils/visuals.js";
 
 /**
  * UI Panel Manager.
@@ -19,7 +18,9 @@ export class UI {
    */
   render() {
     const div = document.createElement("div");
+    this.panel = div;
     div.id = "sf-panel";
+    div.hidden = true;
     div.innerHTML = `
         <div id="sf-header">
             <span id="sf-title">STOCKFISH LOCAL</span>
@@ -36,17 +37,17 @@ export class UI {
             <div class="sf-section">
                 <div class="sf-row">
                     <label class="sf-limit-wrap">
-                        <input type="radio" name="limitType" value="depth" class="sf-radio" checked>
+                        <input type="radio" name="sf-limit-type" value="depth" class="sf-radio" checked>
                         <span class="sf-label">Depth</span>
                     </label>
                     <input type="number" id="sf-depth-in" class="sf-input" value="${STATE.depthVal}" min="1" max="60">
                 </div>
                 <div class="sf-row">
                     <label class="sf-limit-wrap">
-                        <input type="radio" name="limitType" value="time" class="sf-radio">
+                        <input type="radio" name="sf-limit-type" value="time" class="sf-radio">
                         <span class="sf-label">Time (ms)</span>
                     </label>
-                    <input type="number" id="sf-time-in" class="sf-input" value="${STATE.timeVal}" step="100" disabled>
+                    <input type="number" id="sf-time-in" class="sf-input" value="${STATE.timeVal}" min="1" max="60000" step="100" disabled>
                 </div>
             </div>
             <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
@@ -121,23 +122,26 @@ export class UI {
     });
 
     // Limit Type (Depth vs Time)
-    document.getElementsByName("limitType").forEach((r) =>
+    panel.querySelectorAll(".sf-radio").forEach((r) =>
       r.addEventListener("change", (e) => {
         STATE.limitType = e.target.value;
         const isDepth = STATE.limitType === "depth";
         depthIn.disabled = !isDepth;
         timeIn.disabled = isDepth;
+        this.app.onSettingsChange();
       })
     );
 
-    depthIn.addEventListener(
-      "change",
-      (e) => (STATE.depthVal = parseInt(e.target.value))
-    );
-    timeIn.addEventListener(
-      "change",
-      (e) => (STATE.timeVal = parseInt(e.target.value))
-    );
+    for (const [input, key] of [[depthIn, "depthVal"], [timeIn, "timeVal"]]) {
+      input.addEventListener("change", () => {
+        const value = input.valueAsNumber;
+        if (Number.isInteger(value)) {
+          STATE[key] = Math.max(Number(input.min), Math.min(Number(input.max), value));
+        }
+        input.value = STATE[key];
+        this.app.onSettingsChange();
+      });
+    }
 
     // 3. Mode Switching
     const modeBtns = panel.querySelectorAll(".sf-mode-btn");
@@ -154,7 +158,7 @@ export class UI {
         });
 
         // Notify App
-        this.app.onModeChange(mode);
+        this.app.onSettingsChange();
       });
     });
   }
@@ -177,7 +181,7 @@ export class UI {
       displayScore = score;
     } else {
       const val = parseFloat(score || 0);
-      displayScore = (val > 0 ? "+" : "") + val;
+      displayScore = (val > 0 ? "+" : "") + val.toFixed(2);
       // Sigmoid function for visual bar
       percent = (1 / (1 + Math.exp(-0.5 * val))) * 100;
     }

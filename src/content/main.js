@@ -1,139 +1,60 @@
-import { CONFIG, STATE } from "./config.js";
+import { STATE } from "./config.js";
+import { BoardObserver } from "./chess/board.js";
 import { UI } from "./ui/panel.js";
 import { LocalEngineService } from "./services/engine.js";
 import { Visuals } from "./utils/visuals.js";
 import "./styles.css";
 
-/**
- * Main Application Class.
- * Orchestrates the DOM observer, engine interactions, and UI updates.
- */
 class App {
-  /**
-   * Initializes the application, state, and DOM observer.
-   */
   constructor() {
-    this.lastFen = "";
     this.engine = new LocalEngineService();
     this.ui = new UI(this);
-    this.initObserver();
-  }
-
-  /**
-   * Observes the simple-move-list for changes.
-   * Uses debouncing to prevent excessive engine calls on rapid DOM changes.
-   */
-  initObserver() {
-    const checkLoop = setInterval(() => {
-      const list = document.querySelector("wc-simple-move-list");
-      if (list) {
-        clearInterval(checkLoop);
-        let timeout;
-        const obs = new MutationObserver(() => {
-          clearTimeout(timeout);
-          timeout = setTimeout(() => this.process(), 100);
-        });
-        obs.observe(list, {
-          childList: true,
-          subtree: true,
-          characterData: true,
-        });
-      }
-    }, 1000);
-  }
-
-  /**
-   * Handles user mode change from the UI panel.
-   * @param {string} mode - The selected mode ("off", "white", "black").
-   */
-  onModeChange(mode) {
-    Visuals.clear();
-    if (mode !== "off") {
-      this.lastFen = "FORCE_UPDATE";
-      this.process();
-    }
-  }
-
-  /**
-   * Scrapes algebraic moves from the DOM.
-   * @returns {string} Space-separated move string.
-   */
-  getMoves() {
-    const nodes = document.querySelectorAll("wc-simple-move-list .node");
-    const moves = [];
-    nodes.forEach((n) => {
-      let text = n.innerText.trim();
-      // Handle figurine notation if present
-      const fig = n.querySelector("[data-figurine]");
-      if (fig) text = fig.getAttribute("data-figurine") + text;
-      if (text) moves.push(text);
+    this.view = {};
+    this.request = 0;
+    new BoardObserver((view) => {
+      const previous = this.view;
+      this.view = view;
+      this.ui.panel.hidden = !view.board;
+      if (view.fen !== previous.fen || view.board !== previous.board) this.process();
+      else if (view.flipped !== previous.flipped) this.draw();
     });
-    return moves.join(" ");
   }
 
-  /**
-   * Processes the current board state, queries the engine, and updates visuals.
-   */
+  onSettingsChange() {
+    this.process();
+  }
+
+  draw() {
+    Visuals.drawArrow(this.view.board, this.result?.bestMove, this.view.flipped);
+  }
+
   async process() {
-    if (STATE.mode === "off") return;
-    Visuals.clear();
-
-    const moves = this.getMoves();
-    if (moves === this.lastFen && moves !== "") return;
-    this.lastFen = moves;
-
-    const moveArr = moves.split(" ").filter((x) => x);
-    const isWhite = moveArr.length % 2 === 0;
-
-    // Check if it is the bot's configured turn
-    const isMyTurn =
-      (STATE.mode === "white" && isWhite) ||
-      (STATE.mode === "black" && !isWhite);
-
-    if (!isMyTurn) return;
-
-    const limitObj = {
+    const { board, fen } = this.view;
+    const mode = STATE.mode;
+    const turn = mode === "white" ? "w" : "b";
+    const limit = {
       type: STATE.limitType,
       value: STATE.limitType === "depth" ? STATE.depthVal : STATE.timeVal,
     };
+    const request = ++this.request;
+    this.result = null;
+    Visuals.clear();
+    this.ui.updateInfo(null, null);
+    if (!board || mode === "off" || !fen || fen.split(" ")[1] !== turn) return;
 
     try {
-      // 1. Get Best Move
-      const bestData = await this.engine.getBestMove(
-        limitObj,
-        moves,
-        STATE.mode
-      );
-
-      // 2. Fallback to explicit Eval if score missing
-      let score = bestData.score;
-      if (!score || score === "0.00") {
-        const evalData = await this.engine.getEvaluation(moves, STATE.mode);
-        if (evalData && evalData.score !== "0.00") score = evalData.score;
+      const result = await this.engine.getBestMove(limit, fen, mode);
+      if (!result || request !== this.request) return;
+      this.result = result;
+      this.draw();
+      this.ui.updateInfo(result.bestMove, result.score);
+    } catch (error) {
+      if (request === this.request) {
+        this.ui.updateInfo("Engine error", null);
+        console.warn("MateIt analysis failed", error);
       }
-
-      // Score is already adjusted for Player perspective in engine.js
-
-      if (bestData && bestData.bestMove) {
-        Visuals.drawArrow(bestData.bestMove);
-        this.ui.updateInfo(bestData.bestMove, score);
-      }
-    } catch (err) {
-      console.error("Analysis Error:", err);
     }
   }
 }
 
-// Bootstrap
-function start() {
-  setTimeout(() => new App(), CONFIG.STARTUP_DELAY);
-}
-
-if (
-  document.readyState === "complete" ||
-  document.readyState === "interactive"
-) {
-  start();
-} else {
-  window.addEventListener("load", start);
-}
+new App();

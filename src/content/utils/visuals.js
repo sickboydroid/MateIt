@@ -1,22 +1,9 @@
 import { CONFIG } from "../config.js";
 
 export const Visuals = {
-  /** Gets the board element from the DOM. */
-  getBoard: () =>
-    document.querySelector("wc-chess-board") ||
-    document.querySelector("chess-board"),
-
-  /** Checks if the board is flipped (black at bottom). */
-  isFlipped: () => {
-    const b = Visuals.getBoard();
-    return b ? b.classList.contains("flipped") : false;
-  },
-
-  /** Converts algebraic square (e.g., "e4") to SVG coordinates. */
-  getCoords: (sq) => {
+  getCoords: (sq, flipped) => {
     const file = sq.charCodeAt(0) - 97; // 'a' -> 0
     const rank = parseInt(sq[1]) - 1; // '1' -> 0
-    const flipped = Visuals.isFlipped();
 
     // In SVG, (0,0) is top-left.
     return flipped
@@ -27,30 +14,21 @@ export const Visuals = {
   /** Clears existing arrows/annotations. */
   clear: () => {
     const svg = document.getElementById("sf-svg-layer");
-    if (svg) svg.innerHTML = "";
+    svg?.remove();
   },
 
   /** Draws an arrow on the board from a move string (e.g., "e2e4"). */
-  drawArrow: (moveStr) => {
+  drawArrow: (board, moveStr, flipped) => {
     Visuals.clear();
-    if (!moveStr) return;
+    if (!board || !/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(moveStr || "")) return;
 
-    const board = Visuals.getBoard();
-    if (!board) return;
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.id = "sf-svg-layer";
+    svg.setAttribute("viewBox", "0 0 8 8");
+    svg.setAttribute("preserveAspectRatio", "none");
 
-    let svg = document.getElementById("sf-svg-layer");
-    if (!svg) {
-      svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.id = "sf-svg-layer";
-      svg.setAttribute("viewBox", "0 0 8 8");
-      svg.setAttribute("preserveAspectRatio", "none");
-      // Basic pointer-events: none ensures clicks pass through to the board
-      svg.style.pointerEvents = "none";
-      board.appendChild(svg);
-    }
-
-    const start = Visuals.getCoords(moveStr.substring(0, 2));
-    const end = Visuals.getCoords(moveStr.substring(2, 4));
+    const start = Visuals.getCoords(moveStr.substring(0, 2), flipped);
+    const end = Visuals.getCoords(moveStr.substring(2, 4), flipped);
 
     // Define Arrowhead Marker
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
@@ -85,5 +63,6 @@ export const Visuals = {
     line.setAttribute("stroke-linecap", "round");
 
     svg.appendChild(line);
+    board.appendChild(svg);
   },
 };
